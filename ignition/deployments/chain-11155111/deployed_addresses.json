@@ -1,5 +1,3 @@
 {
-  "TokenFactoryModule#TokenFactory": "0xdAf6fC47428d2501f584b3e214545E8E0FeFB266",
-  "MyTokenModule#MyToken": "0x38D19fF30DFf62cF65A58675bFd2A211390A3f5f",
-  "TradingPlatformModule#TradingPlatform": "0x67AF4FE5B7d3EbE8cc8e8Bb69244eAee27061b46"
+  "TradingPlatformModule#TradingPlatform": "0xe447c15330D720d6336CA755Ab858B125394E04d"
 }

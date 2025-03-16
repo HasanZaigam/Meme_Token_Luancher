@@ -10,6 +10,7 @@ contract TradingPlatform {
 
     event TokensPurchased(address indexed buyer, uint256 amount);
     event TokensSold(address indexed seller, uint256 amount);
+    event LiquidityAdded(uint256 tokenAmount, uint256 ethAmount);
 
     constructor(address _token, uint256 _tokenPrice) {
         token = IERC20(_token);
@@ -17,7 +18,7 @@ contract TradingPlatform {
         tokenPrice = _tokenPrice;
     }
 
-    // Function to buy tokens
+    // 🔹 Function to Buy Tokens
     function buyTokens() external payable {
         require(msg.value > 0, "Send ETH to buy tokens");
         uint256 amountToBuy = (msg.value * 10**18) / tokenPrice;
@@ -27,7 +28,7 @@ contract TradingPlatform {
         emit TokensPurchased(msg.sender, amountToBuy);
     }
 
-    // Function to sell tokens
+    // 🔹 Function to Sell Tokens
     function sellTokens(uint256 _amount) external {
         require(token.balanceOf(msg.sender) >= _amount, "Not enough tokens");
         uint256 ethAmount = (_amount * tokenPrice) / 10**18;
@@ -38,13 +39,23 @@ contract TradingPlatform {
         emit TokensSold(msg.sender, _amount);
     }
 
-    // Function to withdraw ETH by the owner
+    // 🔹 Function to Add Liquidity (Newly Added)
+    function addLiquidity(uint256 tokenAmount) external payable {
+        require(msg.sender == owner, "Only owner can add liquidity");
+        require(tokenAmount > 0 && msg.value > 0, "Invalid liquidity amounts");
+
+        // Owner must approve token transfer before calling this function
+        token.transferFrom(msg.sender, address(this), tokenAmount);
+        emit LiquidityAdded(tokenAmount, msg.value);
+    }
+
+    // 🔹 Function to Withdraw ETH (Only Owner)
     function withdrawETH() external {
         require(msg.sender == owner, "Only owner can withdraw ETH");
         payable(owner).transfer(address(this).balance);
     }
 
-    // Function to withdraw tokens by the owner
+    // 🔹 Function to Withdraw Tokens (Only Owner)
     function withdrawTokens(uint256 _amount) external {
         require(msg.sender == owner, "Only owner can withdraw tokens");
         token.transfer(owner, _amount);
