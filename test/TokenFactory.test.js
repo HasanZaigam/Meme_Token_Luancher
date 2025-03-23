@@ -39,3 +39,4 @@ describe("TokenFactory", function () {
         expect(Number(ethers.formatUnits(actualTotalSupply, 18))).to.equal(initialSupply);
     });
 });
+
