@@ -1,29 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import TokenFactoryABI from "../abis/TokenFactory.json"; // Token Factory ABI
+import TokenFactoryABI from "../abis/TokenFactory.json"; // Ensure correct path
 
 const TokenList = ({ provider }) => {
   const [tokens, setTokens] = useState([]);
 
+  const tokenFactoryAddress = import.meta.env.VITE_TOKEN_FACTORY;
+
   useEffect(() => {
     const fetchTokens = async () => {
-      if (!provider) return;
+      if (!provider) {
+        console.error("No provider found");
+        return;
+      }
 
-      const tokenFactoryAddress = process.env.REACT_APP_TOKEN_FACTORY;
-      const tokenFactory = new ethers.Contract(tokenFactoryAddress, TokenFactoryABI, provider);
+      console.log("Using Token Factory Address:", tokenFactoryAddress);
 
       try {
-        const tokenCount = await tokenFactory.getTokenCount();
-        let tokensArray = [];
+        // Ensure ABI is passed correctly
+        const tokenFactory = new ethers.Contract(
+          tokenFactoryAddress,
+          TokenFactoryABI.abi, // ✅ Ensure ABI is an array
+          provider
+        );
 
-        for (let i = 0; i < tokenCount; i++) {
-          const tokenAddress = await tokenFactory.getToken(i);
-          tokensArray.push(tokenAddress);
-        }
+        // Use getAllTokens() instead of tokenCount()
+        const allTokens = await tokenFactory.getAllTokens();
+        console.log("Tokens:", allTokens);
 
-        setTokens(tokensArray);
+        setTokens(allTokens);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching tokens:", error);
       }
     };
 
@@ -32,14 +39,20 @@ const TokenList = ({ provider }) => {
 
   return (
     <div>
-      <h2>Available Tokens</h2>
-      <ul>
-        {tokens.length > 0 ? (
-          tokens.map((token, index) => <li key={index}>{token}</li>)
-        ) : (
-          <p>No tokens available.</p>
-        )}
-      </ul>
+      <h2>Created Tokens</h2>
+      {tokens.length === 0 ? (
+        <p>No tokens created yet.</p>
+      ) : (
+        <ul>
+          {tokens.map((token, index) => (
+            <li key={index}>
+              <strong>Name:</strong> {token.name} | 
+              <strong>Symbol:</strong> {token.symbol} | 
+              <strong>Address:</strong> {token.tokenAddress}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

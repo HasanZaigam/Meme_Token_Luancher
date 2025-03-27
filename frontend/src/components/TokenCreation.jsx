@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { ethers } from "ethers";
-import MyTokenABI from "../abis/TokenFactory.json"; // Make sure you have the ABI
+import TokenFactoryABI from "../abis/TokenFactory.json"; // ✅ Use the correct ABI
 
 const TokenCreation = ({ signer }) => {
   const [tokenName, setTokenName] = useState("");
   const [symbol, setSymbol] = useState("");
   const [totalSupply, setTotalSupply] = useState("");
+
+  const tokenFactoryAddress = import.meta.env.VITE_TOKEN_FACTORY; // ✅ Ensure the correct contract address
 
   const handleCreateToken = async () => {
     if (!signer) {
@@ -13,15 +15,26 @@ const TokenCreation = ({ signer }) => {
       return;
     }
 
-    const tokenFactoryAddress = process.env.REACT_APP_TOKEN_FACTORY; // Load from .env
-    const tokenFactory = new ethers.Contract(tokenFactoryAddress, MyTokenABI, signer);
-
     try {
+      console.log("Using Token Factory Address:", tokenFactoryAddress);
+      console.log("ABI Type:", typeof TokenFactoryABI);
+      console.log("ABI Content:", TokenFactoryABI);
+      console.log("Corrected ABI:", TokenFactoryABI.abi); // ✅ Debugging
+
+      // ✅ Create instance of TokenFactory contract
+      const tokenFactory = new ethers.Contract(tokenFactoryAddress, TokenFactoryABI.abi, signer);
+
+      console.log("Available Functions:", tokenFactory); // Debug available functions
+
+      if (!tokenFactory.createToken) {
+        throw new Error("Function createToken does not exist in this contract!");
+      }
+
       const tx = await tokenFactory.createToken(tokenName, symbol, ethers.parseEther(totalSupply));
       await tx.wait();
       alert("Token Created Successfully!");
     } catch (error) {
-      console.error(error);
+      console.error("Error creating token:", error);
       alert("Error creating token.");
     }
   };
