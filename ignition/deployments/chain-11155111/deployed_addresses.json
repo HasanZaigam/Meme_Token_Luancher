@@ -1,3 +1,6 @@
 {
-  "TradingPlatformModule#TradingPlatform": "0xe447c15330D720d6336CA755Ab858B125394E04d"
+  "MyTokenModule_n#MyToken_n": "0x48E47EA41C84735770Ad72182c9502b8883F873c",
+  "BondingCurveModule#BondingCurve": "0xd0191e86099C8209584565B3eD418D1d7D55e969",
+  "TradingContractModule#TradingContract": "0x8C9521316aFd43e2A8AEA14be275c3649263C56E",
+  "TokenFactoryModule_n#TokenFactory_n": "0x213D763Cd7955Ca2a377710bfdbc708E1beF5934"
 }
